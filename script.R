@@ -1,19 +1,22 @@
 setwd("C:/Users/6837258/Desktop")
 df <-read.csv("COMMENTS_sample.csv", sep=";", encoding="latin1", stringsAsFactors=FALSE)
 
-#funÁ„o pra contar todas as palavras
+#fun√ß√£o pra contar todas as palavras
 wordcount <- function(str) {
   sapply(gregexpr("\\b\\W+\\b", str, perl=TRUE), function(x) sum(x>0) ) + 1 
 }
 
-#criando vari·veis para o total de palavras
+#criando vari√°veis para o total de palavras
 df$post_wordcount_total <- wordcount(df$Post.title)
 df$comment_wordcount_total <- wordcount(df$Comment_text)
 
-
-#criando um corpus para tirar stopwords - coment·rios
+#pacote de Text Mining         
+install.packages('tm')
+library(tm)
+         
+#criando um corpus para tirar stopwords - coment√°rios
 comments <- Corpus(VectorSource(df$Comment_text))
-#removendo stopwords, acentos e espaÁos
+#removendo stopwords, acentos e espa√ßos
 comments  <- tm_map(comments , removeWords, stopwords("pt")) 
 comments  <- tm_map(comments , removePunctuation) 
 comments <- tm_map(comments, stripWhitespace)
@@ -25,7 +28,7 @@ df$comment_wordcount_clean <-rowSums(as.matrix(dtm))
 
 #criando um corpus para tirar stopwords - post
 post <- Corpus(VectorSource(df$Post.title))
-#removendo stopwords, acentos e espaÁos
+#removendo stopwords, acentos e espa√ßos
 post  <- tm_map(post , removeWords, stopwords("pt")) 
 post <- tm_map(post, stripWhitespace)
 #voltando para o formato de banco de dados
